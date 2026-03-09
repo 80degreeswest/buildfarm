@@ -67,6 +67,7 @@ public class Worker {
   // If you want GPU actions to run exclusively, define a single GPU resource.
   private List<LimitedResource> resources = new ArrayList<>();
 
+  private boolean resourceMetricsEnabled = true;
   private boolean errorOperationOutputSizeExceeded = false;
   private boolean legacyDirectoryFileCache = false;
   private boolean absolutizeCommandProgram = isWindows();
