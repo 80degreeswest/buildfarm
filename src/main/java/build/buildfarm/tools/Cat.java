@@ -231,6 +231,13 @@ class Cat {
     for (String linkedInputDirectory : metadata.getLinkedInputDirectoriesList()) {
       indentOut(indentLevel + 1, linkedInputDirectory);
     }
+    if (metadata.getWallTimeMs() > 0) {
+      indentOut(indentLevel, format("Wall Time: %.3fs", metadata.getWallTimeMs() / 1_000.0));
+    }
+    if (metadata.getMaxResidentSetSizeKb() > 0) {
+      indentOut(
+          indentLevel, format("Max Resident Set Size: %d KB", metadata.getMaxResidentSetSizeKb()));
+    }
   }
 
   private static void printExecutedActionMetadata(

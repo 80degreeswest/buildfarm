@@ -598,6 +598,20 @@ class Executor {
       return Code.INVALID_ARGUMENT;
     }
 
+    // Optionally start resource usage monitoring thread to collect CPU/memory utilization
+    // from /proc while the process is alive.
+    boolean collectResourceMetrics =
+        BuildfarmConfigs.getInstance().getWorker().isResourceMetricsEnabled();
+    ResourceUsageCollector resourceCollector = null;
+    Thread resourceMonitorThread = null;
+    if (collectResourceMetrics) {
+      resourceCollector = new ResourceUsageCollector(process.pid());
+      resourceMonitorThread =
+          new Thread(resourceCollector, "Executor.resourceMonitor." + operationName);
+      resourceMonitorThread.setDaemon(true);
+      resourceMonitorThread.start();
+    }
+
     // Create threads to extract stdout/stderr from a process.
     // The readers attach to the process's input/error streams.
     final Write stdoutWrite = new NullWrite();
@@ -663,6 +677,22 @@ class Executor {
     }
 
     resultBuilder.setExitCode(exitCode).setStdoutRaw(stdout).setStderrRaw(stderr);
+
+    // Stop resource monitor and record collected utilization in auxiliaryMetadata.
+    if (collectResourceMetrics && resourceMonitorThread != null) {
+      resourceMonitorThread.interrupt();
+      try {
+        resourceMonitorThread.join(2000);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+      }
+      executionContext
+          .workerExecutedMetadata
+          .setMaxResidentSetSizeKb(resourceCollector.getMaxRssKb());
+    }
+    // Always record wall time — it requires no /proc access.
+    long wallTimeMs = (System.nanoTime() - startNanoTime) / 1_000_000;
+    executionContext.workerExecutedMetadata.setWallTimeMs(wallTimeMs);
 
     // allow debugging after an execution
     if (limits.debugAfterExecution) {

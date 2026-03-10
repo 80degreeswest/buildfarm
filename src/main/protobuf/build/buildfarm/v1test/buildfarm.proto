@@ -735,4 +735,8 @@ message WorkerExecutedMetadata {
   repeated string linked_input_directories = 2;
 
   repeated string tags = 3;
+  // Resource utilization recorded during action execution
+  int64 max_resident_set_size_kb = 6;
+
+  int64 wall_time_ms = 7;
 }
