@@ -17,7 +17,7 @@ java_library(
         "//src/main/java/build/buildfarm/instance/server",
         "//src/main/java/build/buildfarm/instance/shard",
         "//src/main/java/build/buildfarm/instance/stub",
-        "//src/main/java/build/buildfarm/metrics/prometheus",
+        "//src/main/java/build/buildfarm/plugins",
         "//src/main/java/build/buildfarm/worker",
         "//src/main/java/build/buildfarm/worker/cgroup",
         "//src/main/java/build/buildfarm/worker/resources",

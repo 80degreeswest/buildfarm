@@ -59,7 +59,7 @@ import build.buildfarm.instance.shard.RemoteInputStreamFactory;
 import build.buildfarm.instance.shard.WorkerStubs;
 import build.buildfarm.instance.shard.codec.json.JsonCodec;
 import build.buildfarm.instance.stub.StubInstance;
-import build.buildfarm.metrics.prometheus.PrometheusPublisher;
+import build.buildfarm.plugins.BuildfarmPluginManager;
 import build.buildfarm.v1test.Digest;
 import build.buildfarm.v1test.PipelineChange;
 import build.buildfarm.v1test.ShardWorker;
@@ -643,6 +643,9 @@ public final class Worker extends LoggingMain {
 
   public void start() throws ConfigurationException, InterruptedException, IOException {
     released.set(false);
+
+    BuildfarmPluginManager.getInstance().startPlugins();
+
     String session = UUID.randomUUID().toString();
     ServerBuilder<?> serverBuilder = ServerBuilder.forPort(configs.getWorker().getPort());
     String identifier = "buildfarm-worker-" + configs.getWorker().getPublicName() + "-" + session;
@@ -817,7 +820,7 @@ public final class Worker extends LoggingMain {
           public void onSuccess(Void result) {
             healthStatusManager.setStatus(
                 HealthStatusManager.SERVICE_NAME_ALL_SERVICES, ServingStatus.SERVING);
-            PrometheusPublisher.startHttpServer(configs.getPrometheusPort());
+            BuildfarmPluginManager.getInstance().notifyServerStarted();
           }
 
           @Override
@@ -923,7 +926,7 @@ public final class Worker extends LoggingMain {
     prepareWorkerForGracefulShutdown();
     // Clean-up any cgroups that were possibly created/mutated.
     Group.onShutdown();
-    PrometheusPublisher.stopHttpServer();
+    BuildfarmPluginManager.getInstance().notifyServerStopping();
     boolean interrupted = Thread.interrupted();
     if (pipeline != null) {
       log.log(INFO, "Closing the pipeline");
@@ -978,6 +981,7 @@ public final class Worker extends LoggingMain {
       Thread.currentThread().interrupt();
       throw new InterruptedException();
     }
+    BuildfarmPluginManager.getInstance().stopPlugins();
     log.info("*** server shut down");
   }
 

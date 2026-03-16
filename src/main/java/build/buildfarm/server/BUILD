@@ -14,7 +14,7 @@ java_library(
         "//src/main/java/build/buildfarm/common/services",
         "//src/main/java/build/buildfarm/instance",
         "//src/main/java/build/buildfarm/instance/shard",
-        "//src/main/java/build/buildfarm/metrics/prometheus",
+        "//src/main/java/build/buildfarm/plugins",
         "//src/main/java/build/buildfarm/server/services",
         "//src/main/protobuf/build/buildfarm/v1test:buildfarm_java_proto",
         "@buildfarm_maven//:com_github_pcj_google_options",

@@ -10,7 +10,6 @@ java_test(
         "//src/main/java/build/buildfarm/common",
         "//src/main/java/build/buildfarm/common/config",
         "//src/main/java/build/buildfarm/metrics",
-        "//src/main/java/build/buildfarm/metrics/log",
         "//src/main/protobuf/build/buildfarm/v1test:buildfarm_java_proto",
         "//src/test/java/build/buildfarm:test_runner",
         "@buildfarm_maven//:com_google_guava_guava",

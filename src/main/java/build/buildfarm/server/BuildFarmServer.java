@@ -29,7 +29,7 @@ import build.buildfarm.common.services.ByteStreamService;
 import build.buildfarm.common.services.ContentAddressableStorageService;
 import build.buildfarm.instance.Instance;
 import build.buildfarm.instance.shard.ServerInstance;
-import build.buildfarm.metrics.prometheus.PrometheusPublisher;
+import build.buildfarm.plugins.BuildfarmPluginManager;
 import build.buildfarm.server.services.ActionCacheService;
 import build.buildfarm.server.services.CapabilitiesService;
 import build.buildfarm.server.services.ExecutionService;
@@ -124,6 +124,9 @@ public class BuildFarmServer extends LoggingMain {
       throws IOException, ConfigurationException, InterruptedException {
     shutdownInitiated.set(false);
     released.set(false);
+
+    BuildfarmPluginManager.getInstance().startPlugins();
+
     // FIXME change to instance = ...; instance.start();
     ServerInstance serverInstance = createInstance();
     instance = serverInstance;
@@ -182,7 +185,7 @@ public class BuildFarmServer extends LoggingMain {
 
     healthStatusManager.setStatus(
         HealthStatusManager.SERVICE_NAME_ALL_SERVICES, ServingStatus.SERVING);
-    PrometheusPublisher.startHttpServer(configs.getPrometheusPort());
+    BuildfarmPluginManager.getInstance().notifyServerStarted();
     healthCheckMetric.labels("start").inc();
   }
 
@@ -208,7 +211,7 @@ public class BuildFarmServer extends LoggingMain {
       healthStatusManager.setStatus(
           HealthStatusManager.SERVICE_NAME_ALL_SERVICES, ServingStatus.NOT_SERVING);
     }
-    PrometheusPublisher.stopHttpServer();
+    BuildfarmPluginManager.getInstance().notifyServerStopping();
     healthCheckMetric.labels("stop").inc();
     try {
       initiateShutdown();
@@ -233,6 +236,7 @@ public class BuildFarmServer extends LoggingMain {
       invocationsCollectorThread.interrupt();
       invocationsCollectorThread.join();
     }
+    BuildfarmPluginManager.getInstance().stopPlugins();
     log.info("*** server shut down");
   }
 

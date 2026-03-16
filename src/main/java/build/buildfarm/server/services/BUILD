@@ -12,7 +12,6 @@ java_library(
         "//src/main/java/build/buildfarm/common/resources:resource_java_proto",
         "//src/main/java/build/buildfarm/instance",
         "//src/main/java/build/buildfarm/metrics",
-        "//src/main/java/build/buildfarm/metrics/log",
         "//src/main/protobuf/build/buildfarm/v1test:buildfarm_java_grpc",
         "//src/main/protobuf/build/buildfarm/v1test:buildfarm_java_proto",
         "//third_party/remote-apis:build_bazel_remote_asset_v1_remote_asset_java_grpc",

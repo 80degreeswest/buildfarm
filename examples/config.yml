@@ -4,6 +4,7 @@ maximumActionTimeout: 3600
 maxEntrySizeBytes: 2147483648 # 2 * 1024 * 1024 * 1024
 prometheusPort: 9090
 allowSymlinkTargetAbsolute: false
+pluginsDirectory: plugins
 server:
   instanceType: SHARD
   name: shard
@@ -46,9 +47,6 @@ server:
     clusterEndpoint: grpc://localhost
   metrics:
     logLevel: FINEST
-    topic: test
-    topicMaxConnections: 1000
-    secretName: test
   correlatedInvocationsIndexScopes: !!set
     ? host
     ? username

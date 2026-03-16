@@ -21,7 +21,6 @@ import build.bazel.remote.execution.v2.ExecuteOperationMetadata;
 import build.bazel.remote.execution.v2.ExecuteResponse;
 import build.bazel.remote.execution.v2.RequestMetadata;
 import build.buildfarm.common.config.BuildfarmConfigs;
-import build.buildfarm.metrics.log.LogMetricsPublisher;
 import build.buildfarm.v1test.OperationRequestMetadata;
 import com.google.longrunning.Operation;
 import com.google.protobuf.Any;
@@ -37,6 +36,25 @@ import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public class MetricsPublisherTest {
+
+  /** Simple concrete subclass of AbstractMetricsPublisher for testing. */
+  private static class TestMetricsPublisher extends AbstractMetricsPublisher {
+    TestMetricsPublisher(String clusterId) {
+      super(clusterId);
+    }
+
+    @Override
+    public void publishRequestMetadata(
+        Operation operation, RequestMetadata requestMetadata) {
+      // no-op for tests
+    }
+
+    @Override
+    public void publishMetric(String metricName, Object metricValue) {
+      // no-op for tests
+    }
+  }
+
   private final ExecuteOperationMetadata defaultExecuteOperationMetadata =
       ExecuteOperationMetadata.getDefaultInstance();
   private final RequestMetadata defaultRequestMetadata =
@@ -75,7 +93,7 @@ public class MetricsPublisherTest {
             .setMetadata(Any.pack(defaultExecuteOperationMetadata))
             .build();
 
-    LogMetricsPublisher metricsPublisher = new LogMetricsPublisher();
+    TestMetricsPublisher metricsPublisher = new TestMetricsPublisher("buildfarm-test");
     assertThat(
             AbstractMetricsPublisher.formatRequestMetadataToJson(
                 metricsPublisher.populateRequestMetadata(operation, defaultRequestMetadata)))
@@ -104,7 +122,7 @@ public class MetricsPublisherTest {
     Operation operation =
         defaultOperation.toBuilder().setMetadata(Any.pack(defaultExecuteOperationMetadata)).build();
 
-    assertThat(new LogMetricsPublisher().populateRequestMetadata(operation, defaultRequestMetadata))
+    assertThat(new TestMetricsPublisher("buildfarm-test").populateRequestMetadata(operation, defaultRequestMetadata))
         .isNotNull();
   }
 
@@ -113,7 +131,7 @@ public class MetricsPublisherTest {
     Operation operation =
         defaultOperation.toBuilder().setResponse(Any.pack(defaultExecuteResponse)).build();
 
-    assertThat(new LogMetricsPublisher().populateRequestMetadata(operation, defaultRequestMetadata))
+    assertThat(new TestMetricsPublisher("buildfarm-test").populateRequestMetadata(operation, defaultRequestMetadata))
         .isNotNull();
   }
 
@@ -128,7 +146,7 @@ public class MetricsPublisherTest {
             .setMetadata(Any.pack(defaultExecuteOperationMetadata))
             .build();
 
-    assertThat(new LogMetricsPublisher().populateRequestMetadata(operation, defaultRequestMetadata))
+    assertThat(new TestMetricsPublisher("buildfarm-test").populateRequestMetadata(operation, defaultRequestMetadata))
         .isNotNull();
   }
 }

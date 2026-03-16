@@ -7,11 +7,13 @@ java_library(
     visibility = ["//visibility:public"],
     deps = [
         "//src/main/java/build/buildfarm/common",
+        "//src/main/java/build/buildfarm/plugins",
         "//src/main/protobuf/build/buildfarm/v1test:buildfarm_java_proto",
         "@buildfarm_maven//:com_google_guava_guava",
         "@buildfarm_maven//:com_google_protobuf_protobuf_java",
         "@buildfarm_maven//:com_google_protobuf_protobuf_java_util",
         "@buildfarm_maven//:io_prometheus_simpleclient",
+        "@buildfarm_maven//:org_pf4j_pf4j",
         "@buildfarm_maven//:org_projectlombok_lombok",
         "@googleapis//google/rpc:rpc_java_proto",
         "@remoteapis//build/bazel/remote/execution/v2:remote_execution_java_proto",

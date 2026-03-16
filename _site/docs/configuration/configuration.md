@@ -154,34 +154,6 @@ server:
     clusterEndpoint: "grpc://localhost"
 ```
 
-### Metrics
-
-| Configuration       | Accepted and _Default_ Values | Description                                                                               |
-|---------------------|-------------------------------|-------------------------------------------------------------------------------------------|
-| publisher           | String, aws, gcp, _log_       | Specify publisher type for sending metadata                                               |
-| logLevel            | String, INFO, _FINEST_        | Specify log level ("log" publisher only, all Java util logging levels are allowed here)   |
-| topic               | String, _test_                | Specify SNS topic name for cloud publishing ("aws" publisher only)                        |
-| topicMaxConnections | Integer, 1000                 | Specify maximum number of connections allowed for cloud publishing ("aws" publisher only) |
-| secretName          | String, _test_                | Specify secret name to pull SNS permissions from ("aws" publisher only)                   |
-
-Example:
-
-```yaml
-server:
-  metrics:
-    publisher: log
-    logLevel: INFO
-```
-
-```yaml
-server:
-  metrics:
-    publisher: aws
-    topic: buildfarm-metadata-test
-    topicMaxConnections: 1000
-    secretName: buildfarm-secret
-```
-
 ### Correlated Invocations Index Scopes
 
 A set of names to extract per-correlatedInvocationsId fields from a valid URI to create indices which will contain the fragment uuid

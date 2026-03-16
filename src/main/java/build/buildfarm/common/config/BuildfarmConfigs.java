@@ -77,6 +77,7 @@ public final class BuildfarmConfigs {
   private Backplane backplane = new Backplane();
   private Worker worker = new Worker();
   private ExecutionWrappers executionWrappers = new ExecutionWrappers();
+  private String pluginsDirectory = "plugins";
 
   private BuildfarmConfigs() {}
 

@@ -16,8 +16,9 @@ package build.buildfarm.metrics;
 
 import build.bazel.remote.execution.v2.RequestMetadata;
 import com.google.longrunning.Operation;
+import org.pf4j.ExtensionPoint;
 
-public interface MetricsPublisher {
+public interface MetricsPublisher extends ExtensionPoint {
   void publishRequestMetadata(Operation operation, RequestMetadata requestMetadata);
 
   void publishMetric(String metricName, Object metricValue);
